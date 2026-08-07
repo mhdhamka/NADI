@@ -95,19 +95,9 @@ public:
     );
 
 
-
-
     // Console
-
-
     static void clearScreen();
-
-
-
     static void pause();
-
-
-
 
 };
 

@@ -29,24 +29,14 @@ public:
 
 
     // Create payment
-
-
     Payment createPayment(
-
         const std::string& orderID,
-
         double amount,
-
-        const std::string& method
-
+        PaymentMethod method
     );
 
 
-
-
     // Payment processing
-
-
     bool processPayment(
 
         const std::string& paymentID

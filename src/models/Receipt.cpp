@@ -16,6 +16,10 @@ Receipt::Receipt()
 
     orderID = "";
 
+    paymentID = "";
+
+    customerID = "";
+
 
     subtotal = 0;
 
@@ -41,43 +45,33 @@ Receipt::Receipt()
 
 Receipt::Receipt(
     const string& receiptID,
-    const Order& order
-
+    const string& orderID,
+    const string& paymentID,
+    const string& customerID
 )
 
 {
 
     this->receiptID = receiptID;
 
+    this->orderID = orderID;
 
-    this->order = order;
+    this->paymentID = paymentID;
 
-
-    this->orderID =
-        order.getOrderID();
-
+    this->customerID = customerID;
 
 
-    subtotal =
-        order.getSubtotal();
+    subtotal = 0;
 
+    tax = 0;
 
-    tax =
-        order.getTax();
+    discount = 0;
 
-
-    discount =
-        order.getDiscount();
-
-
-    totalAmount =
-        order.getTotalAmount();
-
+    totalAmount = 0;
 
 
     status =
         ReceiptStatus::Generated;
-
 
 
     createdAt =
@@ -89,8 +83,10 @@ Receipt::Receipt(
 
 
 
-string Receipt::getReceiptID() const
+// Getters
 
+
+string Receipt::getReceiptID() const
 {
     return receiptID;
 }
@@ -98,15 +94,27 @@ string Receipt::getReceiptID() const
 
 
 string Receipt::getOrderID() const
-
 {
     return orderID;
 }
 
 
 
-double Receipt::getSubtotal() const
+string Receipt::getPaymentID() const
+{
+    return paymentID;
+}
 
+
+
+string Receipt::getCustomerID() const
+{
+    return customerID;
+}
+
+
+
+double Receipt::getSubtotal() const
 {
     return subtotal;
 }
@@ -114,7 +122,6 @@ double Receipt::getSubtotal() const
 
 
 double Receipt::getTax() const
-
 {
     return tax;
 }
@@ -122,7 +129,6 @@ double Receipt::getTax() const
 
 
 double Receipt::getDiscount() const
-
 {
     return discount;
 }
@@ -130,16 +136,13 @@ double Receipt::getDiscount() const
 
 
 double Receipt::getTotalAmount() const
-
 {
     return totalAmount;
 }
 
 
 
-
 ReceiptStatus Receipt::getStatus() const
-
 {
     return status;
 }
@@ -148,13 +151,100 @@ ReceiptStatus Receipt::getStatus() const
 
 
 
+// Setters
+
+
+void Receipt::setReceiptID(
+    const string& receiptID
+)
+{
+    this->receiptID = receiptID;
+}
+
+
+
+void Receipt::setOrderID(
+    const string& orderID
+)
+{
+    this->orderID = orderID;
+}
+
+
+
+void Receipt::setPaymentID(
+    const string& paymentID
+)
+{
+    this->paymentID = paymentID;
+}
+
+
+
+void Receipt::setCustomerID(
+    const string& customerID
+)
+{
+    this->customerID = customerID;
+}
+
+
+
+void Receipt::setSubtotal(
+    double subtotal
+)
+{
+    this->subtotal = subtotal;
+}
+
+
+
+void Receipt::setTax(
+    double tax
+)
+{
+    this->tax = tax;
+}
+
+
+
+void Receipt::setDiscount(
+    double discount
+)
+{
+    this->discount = discount;
+}
+
+
+
+void Receipt::setTotalAmount(
+    double amount
+)
+{
+    this->totalAmount = amount;
+}
+
+
+
+void Receipt::setStatus(
+    ReceiptStatus status
+)
+{
+    this->status = status;
+}
+
+
+
+
+
+// Actions
+
+
 void Receipt::markPrinted()
 
 {
-
     status =
         ReceiptStatus::Printed;
-
 }
 
 
@@ -164,10 +254,8 @@ void Receipt::markPrinted()
 void Receipt::cancelReceipt()
 
 {
-
     status =
         ReceiptStatus::Cancelled;
-
 }
 
 
@@ -179,56 +267,34 @@ void Receipt::printReceipt() const
 {
 
     cout
-    << "\n=================================\n"
-    << "       RAKYAT ELECTRONICS\n"
+    << "\n==========================================\n"
+    << "       NETWORKED AUTOMATED DIGITAL INVENTORY SYSTEM\n"
     << "             RECEIPT\n"
-    << "=================================\n";
+    << "==========================================\n";
 
 
     cout
+
     << "Receipt ID: "
     << receiptID
 
     << "\nOrder ID: "
-    << orderID;
+    << orderID
+
+    << "\nPayment ID: "
+    << paymentID
+
+    << "\nCustomer ID: "
+    << customerID;
 
 
 
     cout
-    << "\n\nITEMS\n"
-    << "---------------------------------\n";
-
-
-
-    for(auto item : order.getItems())
-
-    {
-
-        cout
-
-        << item.getProduct().getName()
-
-        << " x "
-
-        << item.getQuantity()
-
-        << "    RM "
-
-        << fixed
-        << setprecision(2)
-
-        << item.getSubtotal()
-
-        << "\n";
-
-    }
-
-
-
-    cout
-    << "---------------------------------\n"
+    << "\n\n---------------------------------\n"
 
     << "Subtotal: RM "
+    << fixed
+    << setprecision(2)
     << subtotal
 
     << "\nDiscount: RM "
@@ -241,6 +307,32 @@ void Receipt::printReceipt() const
     << totalAmount
 
 
+    << "\n---------------------------------\n"
+
+    << "Status: ";
+
+
+    switch(status)
+    {
+
+        case ReceiptStatus::Generated:
+            cout << "Generated";
+            break;
+
+
+        case ReceiptStatus::Printed:
+            cout << "Printed";
+            break;
+
+
+        case ReceiptStatus::Cancelled:
+            cout << "Cancelled";
+            break;
+
+    }
+
+
+    cout
     << "\n=================================\n";
 
 }
@@ -252,7 +344,5 @@ void Receipt::printReceipt() const
 void Receipt::displayReceipt() const
 
 {
-
     printReceipt();
-
 }

@@ -1,17 +1,20 @@
 #include "services/MenuService.h"
 
-
 #include <iostream>
 
-
-#include "UtilsService.h"
-
-
+#include "services/UtilsService.h"
 
 using namespace std;
 
-
-
+// ===== Terminal Colors =====
+const string RESET  = "\033[0m";
+const string BLUE   = "\033[34m";
+const string CYAN   = "\033[36m";
+const string GREEN  = "\033[32m";
+const string YELLOW = "\033[33m";
+const string RED    = "\033[31m";
+const string WHITE  = "\033[37m";
+const string BOLD   = "\033[1m";
 
 
 MenuService::MenuService()
@@ -39,13 +42,9 @@ MenuService::MenuService()
 MenuService::MenuService(
 
 AuthenticationService* auth,
-
 ProductService* productService,
-
 OrderService* orderService,
-
 ReportService* reportService,
-
 InventoryService* inventoryService
 
 )
@@ -53,23 +52,12 @@ InventoryService* inventoryService
 {
 
     this->auth=auth;
-
     this->productService=productService;
-
     this->orderService=orderService;
-
     this->reportService=reportService;
-
     this->inventoryService=inventoryService;
 
 }
-
-
-
-
-
-
-
 
 
 void MenuService::start()
@@ -88,109 +76,91 @@ void MenuService::start()
 }
 
 
-
-
-
-
-
-
-
 void MenuService::loginMenu()
-
 {
-
     UtilsService::clearScreen();
 
+    cout << BLUE;
+    cout << "╔══════════════════════════════════════════════════════════════╗\n";
+    cout << "║                                                              ║\n";
+    cout << "║      ███╗   ██╗ █████╗ ██████╗ ██╗                           ║\n";
+    cout << "║      ████╗  ██║██╔══██╗██╔══██╗██║                           ║\n";
+    cout << "║      ██╔██╗ ██║███████║██║  ██║██║                           ║\n";
+    cout << "║      ██║╚██╗██║██╔══██║██║  ██║██║                           ║\n";
+    cout << "║      ██║ ╚████║██║  ██║██████╔╝██║                           ║\n";
+    cout << "║      ╚═╝  ╚═══╝╚═╝  ╚═╝╚═════╝ ╚═╝                           ║\n";
+    cout << "║                                                              ║\n";
 
+    cout << CYAN;
+    cout << "║          Networked Automated Digital Inventory              ║\n";
+    cout << "║                 Retail Management System                    ║\n";
 
-    cout
+    cout << BLUE;
+    cout << "║                                                              ║\n";
+    cout << "╚══════════════════════════════════════════════════════════════╝\n";
 
-    << "\n==============================\n"
+    cout << RESET << "\n";
 
-    << " RAKYAT ELECTRONICS SYSTEM\n"
+    cout << WHITE
+         << "Branch   : "
+         << CYAN
+         << "Kuching HQ\n";
 
-    << "==============================\n\n";
+    cout << WHITE
+         << "Version  : "
+         << YELLOW
+         << "2.0.0\n";
 
+    cout << WHITE
+         << "Database : "
+         << GREEN
+         << "Connected ✓\n";
 
+    cout << RESET;
+
+    cout << "\n--------------------------------------------------------------\n";
 
     string username;
-
     string password;
 
+    cout << CYAN << "Username : " << RESET;
+    cin >> username;
 
-
-    cout<<"Username: ";
-
-    cin>>username;
-
-
-
-    cout<<"Password: ";
-
-    cin>>password;
-
-
+    cout << CYAN << "Password : " << RESET;
+    cin >> password;
 
     if(auth->login(username,password))
-
     {
-
-
-        string role =
-
-        auth->getCurrentUser()
-
-        ->getRole();
-
-
-
-        if(role=="ADMIN")
-
-            adminMenu();
-
-
-
-        else if(role=="MANAGER")
-
-            managerMenu();
-
-
-
-        else if(role=="CASHIER")
-
-            cashierMenu();
-
-
-
-        else
-
-            customerMenu();
-
-
-
-    }
-
-    else
-
-    {
-
-        cout
-
-        << "\nInvalid login\n";
-
+        cout << GREEN
+             << "\nLogin Successful!\n"
+             << RESET;
 
         UtilsService::pause();
 
+        string role =
+            auth->getCurrentUser()->getRole();
+
+        if(role=="ADMIN")
+            adminMenu();
+
+        else if(role=="MANAGER")
+            managerMenu();
+
+        else if(role=="CASHIER")
+            cashierMenu();
+
+        else
+            customerMenu();
     }
+    else
+    {
+        cout << RED
+             << "\nInvalid Username or Password.\n"
+             << RESET;
 
+        UtilsService::pause();
+    }
 }
-
-
-
-
-
-
-
 
 
 void MenuService::adminMenu()
@@ -404,17 +374,41 @@ void MenuService::cashierMenu()
         {
 
         case 1:
+        {
+            string customerID;
 
-            orderService->createOrder();
+            cout << "Customer ID: ";
+            cin >> customerID;
+
+
+            Order order = 
+                orderService->createOrder(customerID);
+
+
+            cout << "\nOrder created successfully!\n";
+            cout << "Order ID: "
+                << order.getOrderID()
+                << "\n";
 
             break;
+        }
 
 
         case 2:
+        {
+            string orderID;
 
-            orderService->viewReceipt();
+            cout << "Order ID: ";
+            cin >> orderID;
+
+
+            if(!orderService->displayOrder(orderID))
+            {
+                cout << "Order not found.\n";
+            }
 
             break;
+        }
 
 
         case 3:

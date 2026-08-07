@@ -30,7 +30,7 @@ Product::Product()
 
 
     stockQuantity = 0;
-
+    totalSold = 0;
     reorderLevel = 10;
 
 
@@ -80,6 +80,8 @@ Product::Product(
 
 
     this->stockQuantity = stockQuantity;
+
+    totalSold = 0;
 
 
     reorderLevel = 10;
@@ -159,7 +161,10 @@ int Product::getStockQuantity() const
     return stockQuantity;
 }
 
-
+int Product::getTotalSold() const
+{
+    return totalSold;
+}
 
 int Product::getReorderLevel() const
 {
@@ -231,8 +236,15 @@ void Product::increaseStock(
     }
 }
 
-
-
+void Product::addSoldQuantity(
+    int quantity
+)
+{
+    if(quantity > 0)
+    {
+        totalSold += quantity;
+    }
+}
 
 bool Product::decreaseStock(
     int amount

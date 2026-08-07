@@ -1,45 +1,76 @@
 #include <iostream>
+#include <windows.h>
 
-#include "Menu.h"
-#include "Database.h"
-#include "Inventory.h"
-#include "Sales.h"
-#include "Report.h"
-#include "User.h"
+#include "services/AuthenticationService.h"
+#include "services/DatabaseService.h"
+#include "services/ProductService.h"
+#include "services/OrderService.h"
+#include "services/InventoryService.h"
+#include "services/ReportService.h"
+#include "services/MenuService.h"
 
 int main()
 {
-    std::cout << "=========================================\n";
-    std::cout << "    Rakyat Electronic System v1.0\n";
-    std::cout << "=========================================\n\n";
+    // =========================================
+    // Enable UTF-8 Console (Windows)
+    // =========================================
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
 
-    Database database;
-    Inventory inventory;
-    Sales sales;
-    Report report;
-    User user;
-    Menu menu;
+    std::cout
+        << "=========================================\n";
 
-    // Load data
-    database.loadProducts();
-    database.loadUsers();
-    database.loadSales();
+    std::cout
+        << "    NETWORKED AUTOMATED DIGITAL INVENTORY SYSTEM\n";
 
-    // Login
-    if (!user.login())
+    std::cout
+        << "=========================================\n\n";
+
+    // =========================================
+    // Database
+    // =========================================
+    DatabaseService databaseService;
+
+    if(!databaseService.initializeDatabase())
     {
-        std::cout << "\nLogin failed.\n";
-        return 0;
+        std::cout
+            << "Failed to initialize database!\n";
+
+        return 1;
     }
 
-    // Main application
-    menu.run(database, inventory, sales, report);
+    // =========================================
+    // Core Services
+    // =========================================
+    AuthenticationService authenticationService(
+        &databaseService
+    );
 
-    // Save before exit
-    database.saveProducts();
-    database.saveSales();
+    ProductService productService;
+    OrderService orderService;
+    InventoryService inventoryService;
+    ReportService reportService;
 
-    std::cout << "\nThank you for using Rakyat Electronic System.\n";
+    // =========================================
+    // Menu Controller
+    // =========================================
+    MenuService menuService(
+
+        &authenticationService,
+        &productService,
+        &orderService,
+        &reportService,
+        &inventoryService
+
+    );
+
+    // =========================================
+    // Start Application
+    // =========================================
+    menuService.start();
+
+    std::cout
+        << "\nThank you for using Networked Automated Digital Inventory System.\n";
 
     return 0;
 }

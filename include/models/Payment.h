@@ -90,12 +90,13 @@ public:
 
 
 
+    // ID
+    void generatePaymentID();
+
+
+
     // Getters
-
-
     std::string getPaymentID() const;
-
-
     std::string getOrderID() const;
 
 
@@ -103,22 +104,32 @@ public:
 
 
     PaymentMethod getMethod() const;
-
-
     PaymentStatus getStatus() const;
 
 
+    // Setters
+    void setOrderID(
+        const std::string& orderID
+    );
+
+    void setAmount(
+        double amount
+    );
+
+    void setMethod(
+        PaymentMethod method
+    );
+
+    void setStatus(
+        PaymentStatus status
+    );
 
 
     // Payment actions
     bool processPayment();
-
     void refundPayment();
-
     void failPayment();
-
     bool isSuccessful() const;
-
     void displayPayment() const;
 
 

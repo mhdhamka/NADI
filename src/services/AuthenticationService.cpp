@@ -1,4 +1,5 @@
 #include "services/AuthenticationService.h"
+#include "services/DatabaseService.h"
 
 #include <iostream>
 
@@ -6,146 +7,65 @@
 using namespace std;
 
 
-
 AuthenticationService::AuthenticationService()
-
+    : currentUser(nullptr),
+      database(nullptr)
 {
-
-    currentUser = nullptr;
-
 }
 
-
-
-
-
-
-bool AuthenticationService::registerUser(
-
-    const User& user
-
-)
-
+AuthenticationService::AuthenticationService(DatabaseService* database)
+    : currentUser(nullptr),
+      database(database)
 {
+}
 
-
-    for(auto& existing : users)
-
+bool AuthenticationService::registerUser(const User& user)
+{
+    if(database == nullptr)
     {
-
-        if(existing.getUsername()
-
-            == user.getUsername())
-
-        {
-
-            return false;
-
-        }
-
+        return false;
     }
 
+    if(findUser(user.getUsername()) != nullptr)
+    {
+        return false;
+    }
 
-
-    users.push_back(user);
-
-
-
-    return true;
-
+    return database->insertUser(user);
 }
-
-
-
-
-
-
-
 
 
 bool AuthenticationService::deleteUser(
-
-    const string& userID
-
-)
-
-{
-
-
-    for(auto iterator = users.begin();
-
-        iterator != users.end();
-
-        iterator++)
-
-    {
-
-
-        if(iterator->getUserID()
-
-            == userID)
-
-        {
-
-            users.erase(iterator);
-
-            return true;
-
-        }
-
-    }
-
-
-
-    return false;
-
-}
-
-
-
-
-
-
-
-
-
-User* AuthenticationService::findUser(
-
     const string& username
-
 )
-
 {
-
-
-    for(auto& user : users)
-
+    if(database == nullptr)
     {
-
-        if(user.getUsername()
-
-            == username)
-
-        {
-
-            return &user;
-
-        }
-
+        return false;
     }
 
-
-
-    return nullptr;
-
+    return database->deleteUser(username);
 }
 
 
 
+User* AuthenticationService::findUser(const string& username)
+{
+    if(database == nullptr)
+    {
+        return nullptr;
+    }
 
+    User* user = new User();
 
+    if(database->getUserByUsername(username, *user))
+    {
+        return user;
+    }
 
-
+    delete user;
+    return nullptr;
+}
 
 
 bool AuthenticationService::login(
@@ -190,12 +110,6 @@ bool AuthenticationService::login(
 
 
 
-
-
-
-
-
-
 void AuthenticationService::logout()
 
 {
@@ -203,11 +117,6 @@ void AuthenticationService::logout()
     currentUser = nullptr;
 
 }
-
-
-
-
-
 
 
 
@@ -222,12 +131,6 @@ bool AuthenticationService::isAuthenticated()
 
 
 
-
-
-
-
-
-
 User* AuthenticationService::getCurrentUser()
 
 {
@@ -235,12 +138,6 @@ User* AuthenticationService::getCurrentUser()
     return currentUser;
 
 }
-
-
-
-
-
-
 
 
 
@@ -267,12 +164,6 @@ bool AuthenticationService::hasRole(
 
 
 
-
-
-
-
-
-
 bool AuthenticationService::isAdmin()
 
 {
@@ -280,11 +171,6 @@ bool AuthenticationService::isAdmin()
     return hasRole("ADMIN");
 
 }
-
-
-
-
-
 
 
 
@@ -323,17 +209,7 @@ void AuthenticationService::displayUsers() const
 
     << "\n========== USERS ==========\n";
 
-
-
-    for(auto& user : users)
-
-    {
-
-        user.displayUser();
-
-    }
-
-
+    cout << "Display users feature coming soon.\n";
 
     cout
 

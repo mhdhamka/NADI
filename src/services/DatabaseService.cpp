@@ -1,349 +1,328 @@
 #include "services/DatabaseService.h"
+#include "models/User.h"
 
-
-#include <iostream>
 #include <fstream>
-
-
+#include <iostream>
 
 using namespace std;
 
-
-
-
 DatabaseService::DatabaseService()
-
 {
-
     database = nullptr;
-
     databaseName = "rakyat_electronics.db";
-
 }
 
-
-
-
-
-
-
-DatabaseService::DatabaseService(
-
-    const string& filename
-
-)
-
+DatabaseService::DatabaseService(const string& filename)
 {
-
     database = nullptr;
-
     databaseName = filename;
-
 }
-
-
-
-
-
-
 
 DatabaseService::~DatabaseService()
-
 {
-
     disconnect();
-
 }
-
-
-
-
-
-
 
 bool DatabaseService::connect()
-
 {
-
-    int result;
-
-
-
-    result = sqlite3_open(
-
-        databaseName.c_str(),
-
-        &database
-
-    );
-
-
-
-    if(result != SQLITE_OK)
-
+    if(database != nullptr)
     {
-
-        return false;
-
+        return true;
     }
 
+    int result = sqlite3_open(
+        databaseName.c_str(),
+        &database
+    );
 
-
-    return true;
-
+    return result == SQLITE_OK;
 }
-
-
-
-
-
-
 
 void DatabaseService::disconnect()
-
 {
-
-    if(database)
-
+    if(database != nullptr)
     {
-
         sqlite3_close(database);
-
         database = nullptr;
-
     }
-
 }
 
-
-
-
-
-
-
-
-bool DatabaseService::execute(
-
-    const string& sql
-
-)
-
+bool DatabaseService::execute(const string& sql)
 {
-
-
     char* errorMessage = nullptr;
 
-
-
     int result = sqlite3_exec(
-
         database,
-
         sql.c_str(),
-
         nullptr,
-
         nullptr,
-
         &errorMessage
-
     );
 
-
-
     if(result != SQLITE_OK)
-
     {
-
-
-        sqlite3_free(errorMessage);
-
+        if(errorMessage)
+        {
+            cout << errorMessage << endl;
+            sqlite3_free(errorMessage);
+        }
 
         return false;
-
     }
 
-
-
     return true;
-
 }
-
-
-
-
-
-
-
-
 
 bool DatabaseService::initializeDatabase()
-
 {
-
     if(!connect())
-
+    {
         return false;
+    }
 
+    if(!createTables())
+    {
+        return false;
+    }
 
+    if(!createDefaultAdmin())
+    {
+        return false;
+    }
 
-    return createTables();
-
+    return true;
 }
 
+bool DatabaseService::createDefaultAdmin()
+{
+    const char* sql =
+        "SELECT COUNT(*) FROM Users;";
 
+    sqlite3_stmt* stmt = nullptr;
 
+    if(sqlite3_prepare_v2(database, sql, -1, &stmt, nullptr) != SQLITE_OK)
+    {
+        return false;
+    }
 
+    int count = 0;
 
+    if(sqlite3_step(stmt) == SQLITE_ROW)
+    {
+        count = sqlite3_column_int(stmt, 0);
+    }
 
+    sqlite3_finalize(stmt);
 
+    if(count > 0)
+    {
+        return true;
+    }
 
+    User admin;
+
+    admin.setUsername("admin");
+    admin.setPassword("admin123");
+    admin.setRole("ADMIN");
+
+    return insertUser(admin);
+}
+
+bool DatabaseService::insertUser(const User& user)
+{
+    const char* sql =
+        "INSERT INTO Users(username,password_hash,role)"
+        "VALUES(?,?,?);";
+
+    sqlite3_stmt* stmt = nullptr;
+
+    if(sqlite3_prepare_v2(database, sql, -1, &stmt, nullptr) != SQLITE_OK)
+    {
+        return false;
+    }
+
+    sqlite3_bind_text(
+        stmt,
+        1,
+        user.getUsername().c_str(),
+        -1,
+        SQLITE_TRANSIENT
+    );
+
+    sqlite3_bind_text(
+        stmt,
+        2,
+        user.getPassword().c_str(),
+        -1,
+        SQLITE_TRANSIENT
+    );
+
+    sqlite3_bind_text(
+        stmt,
+        3,
+        user.getRole().c_str(),
+        -1,
+        SQLITE_TRANSIENT
+    );
+
+    bool success =
+        sqlite3_step(stmt) == SQLITE_DONE;
+
+    sqlite3_finalize(stmt);
+
+    return success;
+}
+
+bool DatabaseService::getUserByUsername(
+    const string& username,
+    User& outUser
+)
+{
+    const char* sql =
+        "SELECT username,password_hash,role "
+        "FROM Users "
+        "WHERE username=?;";
+
+    sqlite3_stmt* stmt = nullptr;
+
+    if(sqlite3_prepare_v2(database, sql, -1, &stmt, nullptr) != SQLITE_OK)
+    {
+        return false;
+    }
+
+    sqlite3_bind_text(
+        stmt,
+        1,
+        username.c_str(),
+        -1,
+        SQLITE_TRANSIENT
+    );
+
+    if(sqlite3_step(stmt) == SQLITE_ROW)
+    {
+        outUser.setUsername(
+            reinterpret_cast<const char*>(
+                sqlite3_column_text(stmt,0)
+            )
+        );
+
+        outUser.setPassword(
+            reinterpret_cast<const char*>(
+                sqlite3_column_text(stmt,1)
+            )
+        );
+
+        outUser.setRole(
+            reinterpret_cast<const char*>(
+                sqlite3_column_text(stmt,2)
+            )
+        );
+
+        sqlite3_finalize(stmt);
+        return true;
+    }
+
+    sqlite3_finalize(stmt);
+    return false;
+}
+
+bool DatabaseService::deleteUser(const string& username)
+{
+    const char* sql =
+        "DELETE FROM Users WHERE username=?;";
+
+    sqlite3_stmt* stmt = nullptr;
+
+    if(sqlite3_prepare_v2(database, sql, -1, &stmt, nullptr) != SQLITE_OK)
+    {
+        return false;
+    }
+
+    sqlite3_bind_text(
+        stmt,
+        1,
+        username.c_str(),
+        -1,
+        SQLITE_TRANSIENT
+    );
+
+    bool success =
+        sqlite3_step(stmt) == SQLITE_DONE;
+
+    sqlite3_finalize(stmt);
+
+    return success;
+}
 
 bool DatabaseService::createTables()
-
 {
-
-
     string sql = R"(
 
-
 CREATE TABLE IF NOT EXISTS Users
-
 (
-
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-username TEXT UNIQUE,
-
-password TEXT,
-
-role TEXT
-
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE,
+    password_hash TEXT,
+    role TEXT
 );
-
-
 
 CREATE TABLE IF NOT EXISTS Products
-
 (
-
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-name TEXT,
-
-brand TEXT,
-
-price REAL,
-
-stock INTEGER
-
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    brand TEXT,
+    price REAL,
+    stock INTEGER
 );
-
-
 
 CREATE TABLE IF NOT EXISTS Customers
-
 (
-
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-name TEXT,
-
-phone TEXT,
-
-email TEXT
-
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    phone TEXT,
+    email TEXT
 );
-
-
 
 CREATE TABLE IF NOT EXISTS Orders
-
 (
-
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-customerID INTEGER,
-
-total REAL,
-
-status TEXT
-
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    customerID INTEGER,
+    total REAL,
+    status TEXT
 );
-
-
 
 CREATE TABLE IF NOT EXISTS Payments
-
 (
-
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-orderID INTEGER,
-
-amount REAL,
-
-method TEXT,
-
-status TEXT
-
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    orderID INTEGER,
+    amount REAL,
+    method TEXT,
+    status TEXT
 );
-
-
 
 CREATE TABLE IF NOT EXISTS Receipts
-
 (
-
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-orderID INTEGER,
-
-paymentID INTEGER,
-
-amount REAL
-
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    orderID INTEGER,
+    paymentID INTEGER,
+    amount REAL
 );
-
 
 )";
 
-
-
-return execute(sql);
-
+    return execute(sql);
 }
 
-
-
-
-
-
-
-
-
-bool DatabaseService::backupDatabase(
-
-    const string& filename
-
-)
-
+bool DatabaseService::backupDatabase(const string& filename)
 {
-
     ofstream file(filename);
 
-
-
     if(!file)
-
+    {
         return false;
-
-
+    }
 
     file.close();
 
-
-
     return true;
-
 }

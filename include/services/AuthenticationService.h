@@ -8,7 +8,7 @@
 
 #include "../models/User.h"
 
-
+class DatabaseService;
 
 class AuthenticationService
 {
@@ -16,56 +16,34 @@ class AuthenticationService
 
 private:
 
-
-    std::vector<User> users;
-
-
     User* currentUser;
-
-
+    DatabaseService* database;
 
 public:
 
 
+    // Constructors
     AuthenticationService();
-
-
+    AuthenticationService(DatabaseService* database);
 
     // User management
-
-
     bool registerUser(
-
         const User& user
-
     );
-
-
 
     bool deleteUser(
-
-        const std::string& userID
-
+        const std::string& username
     );
-
-
 
     User* findUser(
-
         const std::string& username
-
     );
-
 
     // Authentication
     bool login(
-
         const std::string& username,
-
         const std::string& password
-
     );
-
 
     void logout();
 
@@ -73,14 +51,10 @@ public:
 
     User* getCurrentUser();
 
-
     // Authorization
     bool hasRole(
-
         const std::string& role
-
     );
-
 
     bool isAdmin();
 
@@ -90,8 +64,6 @@ public:
 
     // Display
     void displayUsers() const;
-
-
 
 };
 

@@ -25,7 +25,6 @@ private:
 
     std::string orderID;
 
-
     std::string customerID;
 
 
@@ -42,7 +41,6 @@ private:
 
 
     double totalAmount;
-
 
 
     OrderStatus status;
@@ -70,7 +68,33 @@ public:
 
 
 
-    // Item management
+    // =========================
+    // ID
+    // =========================
+
+    void generateOrderID();
+
+
+    std::string getOrderID() const;
+
+
+
+    // =========================
+    // Customer
+    // =========================
+
+    void setCustomerID(
+        const std::string& customerID
+    );
+
+
+    std::string getCustomerID() const;
+
+
+
+    // =========================
+    // Items
+    // =========================
 
     void addItem(
         const OrderItem& item
@@ -78,16 +102,27 @@ public:
 
 
     bool removeItem(
-        const std::string& orderItemID
+        const std::string& productID
     );
 
+
+    bool updateQuantity(
+        const std::string& productID,
+        int quantity
+    );
 
 
     void clearItems();
 
 
 
+    std::vector<OrderItem> getItems() const;
+
+
+
+    // =========================
     // Calculation
+    // =========================
 
     double getSubtotal() const;
 
@@ -102,29 +137,35 @@ public:
 
 
 
+    // Compatibility with OrderService.cpp
+
+    double calculateSubtotal() const;
+
+
+    double calculateTotal() const;
+
+
+
+    // =========================
     // Status
+    // =========================
 
-    void completeOrder();
-
-
-    void cancelOrder();
-
+    void setStatus(
+        OrderStatus status
+    );
 
     OrderStatus getStatus() const;
 
+    void completeOrder();
+    void cancelOrder();
 
 
-    // Information
-
-    std::string getOrderID() const;
+    OrderStatus getOrderStatus() const;
 
 
-    std::string getCustomerID() const;
-
-
-    std::vector<OrderItem> getItems() const;
-
-
+    // =========================
+    // Discount / Tax
+    // =========================
 
     void applyDiscount(
         double amount
@@ -136,6 +177,10 @@ public:
     );
 
 
+
+    // =========================
+    // Display
+    // =========================
 
     void displayOrder() const;
 

@@ -65,7 +65,7 @@ double ReportService::calculateTotalSales()
 
     {
 
-        if(payment.getStatus()=="PAID")
+        if(payment.getStatus() == PaymentStatus::Completed)
 
         {
 

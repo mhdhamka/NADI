@@ -80,29 +80,17 @@ Receipt ReceiptService::generateReceipt(
     );
 
 
-
     receipt.setStatus(
 
-        "COMPLETED"
+        ReceiptStatus::Generated
 
     );
 
-
-
     receipts.push_back(receipt);
-
-
 
     return receipt;
 
 }
-
-
-
-
-
-
-
 
 
 Receipt* ReceiptService::getReceiptByID(

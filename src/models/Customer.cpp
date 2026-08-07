@@ -24,6 +24,8 @@ Customer::Customer()
 
     loyaltyPoints = 0;
 
+    totalSpent = 0;
+
 
     status = CustomerStatus::Active;
 
@@ -56,9 +58,9 @@ Customer::Customer(
 
     this->address = address;
 
-
-
     loyaltyPoints = 0;
+
+    totalSpent = 0;
 
 
     status = CustomerStatus::Active;
@@ -107,7 +109,10 @@ string Customer::getAddress() const
     return address;
 }
 
-
+double Customer::getTotalSpent() const
+{
+    return totalSpent;
+}
 
 int Customer::getLoyaltyPoints() const
 {
@@ -167,7 +172,15 @@ void Customer::setAddress(
 }
 
 
-
+void Customer::addSpentAmount(
+    double amount
+)
+{
+    if(amount > 0)
+    {
+        totalSpent += amount;
+    }
+}
 
 
 void Customer::addLoyaltyPoints(

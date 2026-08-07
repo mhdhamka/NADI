@@ -358,3 +358,44 @@ void Payment::displayPayment() const
 
 
 }
+
+
+void Payment::generatePaymentID()
+{
+    static int counter = 1000;
+
+    paymentID =
+        "PAY-" + std::to_string(counter++);
+}
+
+
+void Payment::setOrderID(
+    const std::string& orderID
+)
+{
+    this->orderID = orderID;
+}
+
+
+void Payment::setAmount(
+    double amount
+)
+{
+    this->amount = amount;
+}
+
+
+void Payment::setMethod(
+    PaymentMethod method
+)
+{
+    this->method = method;
+}
+
+
+void Payment::setStatus(
+    PaymentStatus status
+)
+{
+    this->status = status;
+}

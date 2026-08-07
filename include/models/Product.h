@@ -32,12 +32,10 @@ private:
 
 
     double costPrice;
-
     double sellingPrice;
 
-
     int stockQuantity;
-
+    int totalSold;
     int reorderLevel;
 
 
@@ -85,12 +83,11 @@ public:
 
 
     double getCostPrice() const;
-
     double getSellingPrice() const;
 
 
     int getStockQuantity() const;
-
+    int getTotalSold() const;
     int getReorderLevel() const;
 
 
@@ -114,6 +111,9 @@ public:
         int quantity
     );
 
+    void addSoldQuantity(
+        int quantity
+    );
 
     void increaseStock(
         int amount

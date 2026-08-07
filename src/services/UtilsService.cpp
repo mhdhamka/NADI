@@ -8,21 +8,14 @@
 #include <ctime>
 #include <random>
 #include <cctype>
-
+#include <cstdlib>  
 
 
 using namespace std;
 
 
-
-
-
-
-
 string UtilsService::toUpper(
-
 const string& text
-
 )
 
 {
@@ -38,7 +31,10 @@ const string& text
 
         result.begin(),
 
-        ::toupper
+        [](unsigned char c)
+        {
+            return std::toupper(c);
+        }
 
     );
 
@@ -46,12 +42,6 @@ const string& text
     return result;
 
 }
-
-
-
-
-
-
 
 string UtilsService::trim(
 
@@ -62,37 +52,23 @@ const string& text
 {
 
     size_t start =
-
-    text.find_first_not_of(" ");
-
-
+    text.find_first_not_of(" \t\n\r");
 
     size_t end =
-
-    text.find_last_not_of(" ");
-
-
+    text.find_last_not_of(" \t\n\r");
 
     if(start==string::npos)
 
         return "";
 
-
-
     return text.substr(
 
         start,
-
         end-start+1
 
     );
 
 }
-
-
-
-
-
 
 
 bool UtilsService::isEmpty(
@@ -108,11 +84,6 @@ const string& text
 }
 
 
-
-
-
-
-
 bool UtilsService::isNumber(
 
 const string& text
@@ -124,8 +95,6 @@ const string& text
     if(text.empty())
 
         return false;
-
-
 
     for(char c:text)
 

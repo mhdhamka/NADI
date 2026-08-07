@@ -16,17 +16,10 @@ PaymentService::PaymentService()
 
 
 
-
-
-
 Payment PaymentService::createPayment(
-
     const string& orderID,
-
     double amount,
-
-    const string& method
-
+    PaymentMethod method
 )
 
 {
@@ -34,29 +27,30 @@ Payment PaymentService::createPayment(
     Payment payment;
 
 
-
     payment.generatePaymentID();
 
 
-
-    payment.setOrderID(orderID);
-
-
-
-    payment.setAmount(amount);
+    payment.setOrderID(
+        orderID
+    );
 
 
+    payment.setAmount(
+        amount
+    );
 
-    payment.setPaymentMethod(method);
+
+    payment.setMethod(
+        method
+    );
 
 
-
-    payment.setStatus("PENDING");
-
+    payment.setStatus(
+        PaymentStatus::Pending
+    );
 
 
     payments.push_back(payment);
-
 
 
     return payment;
@@ -91,7 +85,9 @@ bool PaymentService::processPayment(
 
 
 
-    payment->setStatus("PAID");
+    payment->setStatus(
+        PaymentStatus::Completed
+    );
 
 
 
@@ -125,22 +121,14 @@ bool PaymentService::cancelPayment(
 
         return false;
 
-
-
-    payment->setStatus("CANCELLED");
-
+    payment->setStatus(
+        PaymentStatus::Failed
+    );
 
 
     return true;
 
 }
-
-
-
-
-
-
-
 
 
 bool PaymentService::refundPayment(
@@ -163,7 +151,9 @@ bool PaymentService::refundPayment(
 
 
 
-    payment->setStatus("REFUNDED");
+    payment->setStatus(
+        PaymentStatus::Refunded
+    );
 
 
 
@@ -288,7 +278,7 @@ double PaymentService::getTotalRevenue()
 
         if(payment.getStatus()
 
-            == "PAID")
+            == PaymentStatus::Completed)
 
         {
 

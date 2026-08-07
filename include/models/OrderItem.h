@@ -41,6 +41,7 @@ public:
     OrderItem();
 
 
+
     OrderItem(
         const std::string& orderItemID,
         const Product& product,
@@ -49,7 +50,9 @@ public:
 
 
 
+    // =========================
     // Getters
+    // =========================
 
     std::string getOrderItemID() const;
 
@@ -70,16 +73,20 @@ public:
 
 
 
+    // =========================
     // Setters
+    // =========================
 
     void setQuantity(
         int quantity
     );
 
 
+
     void increaseQuantity(
         int amount
     );
+
 
 
     void decreaseQuantity(
@@ -98,7 +105,6 @@ public:
 
 
 };
-
 
 
 #endif

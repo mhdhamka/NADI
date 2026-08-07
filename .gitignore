@@ -1,0 +1,7 @@
+# CMake build directory
+build/
+
+cmake-build-*/
+
+# VS Code
+.vscode/

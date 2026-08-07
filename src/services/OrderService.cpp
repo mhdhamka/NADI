@@ -15,11 +15,6 @@ OrderService::OrderService()
 }
 
 
-
-
-
-
-
 Order OrderService::createOrder(
 
     const string& customerID
@@ -30,23 +25,13 @@ Order OrderService::createOrder(
 
     Order order;
 
-
-
     order.generateOrderID();
-
-
 
     order.setCustomerID(customerID);
 
-
-
-    order.setStatus("PENDING");
-
-
+    order.setStatus(OrderStatus::Pending);
 
     orders.push_back(order);
-
-
 
     return order;
 
@@ -73,57 +58,28 @@ bool OrderService::addItem(
 
 {
 
-
     Order* order =
 
         getOrderByID(orderID);
-
-
 
     if(order == nullptr)
 
         return false;
 
-
-
     if(quantity <= 0)
 
         return false;
 
-
-
-    OrderItem item;
-
-
-
-    item.setProductID(
-
-        product.getProductID()
-
-    );
-
-
-    item.setProductName(
-
-        product.getName()
-
-    );
-
-
-    item.setPrice(
-
-        product.getSellingPrice()
-
+    OrderItem item(
+        "ITEM-" + product.getProductID(),
+        product,
+        quantity
     );
 
 
     item.setQuantity(quantity);
 
-
-
     order->addItem(item);
-
-
 
     return true;
 
@@ -131,17 +87,9 @@ bool OrderService::addItem(
 
 
 
-
-
-
-
-
-
-
 bool OrderService::removeItem(
 
     const string& orderID,
-
     const string& productID
 
 )
@@ -421,7 +369,7 @@ bool OrderService::completeOrder(
 
 
 
-    order->setStatus("COMPLETED");
+    order->setStatus(OrderStatus::Completed);
 
 
 
@@ -463,4 +411,21 @@ bool OrderService::displayOrder(
 
     return true;
 
+}
+
+bool OrderService::cancelOrder(
+    const string& orderID
+)
+{
+    Order* order = getOrderByID(orderID);
+
+
+    if(order == nullptr)
+        return false;
+
+
+    order->setStatus(OrderStatus::Cancelled);
+
+
+    return true;
 }

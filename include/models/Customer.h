@@ -33,14 +33,9 @@ private:
 
     std::string address;
 
-
-
     int loyaltyPoints;
-
-
+    double totalSpent;
     CustomerStatus status;
-
-
 
     std::chrono::system_clock::time_point createdAt;
 
@@ -64,26 +59,17 @@ public:
 
 
     // Getters
-
     std::string getCustomerID() const;
-
-
     std::string getName() const;
-
-
     std::string getPhone() const;
-
-
     std::string getEmail() const;
-
-
     std::string getAddress() const;
 
 
 
     int getLoyaltyPoints() const;
 
-
+    double getTotalSpent() const;
 
     CustomerStatus getStatus() const;
 
@@ -109,6 +95,11 @@ public:
 
     void setAddress(
         const std::string& address
+    );
+
+
+    void addSpentAmount(
+        double amount
     );
 
 
