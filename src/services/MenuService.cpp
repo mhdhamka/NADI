@@ -1,8 +1,11 @@
 #include "services/MenuService.h"
 
 #include <iostream>
+<<<<<<< HEAD
 #include <iomanip>
 #include <ctime>
+=======
+>>>>>>> d3b786b596bfbf909e73e8bb539fe9261ead3c98
 
 #include "services/UtilsService.h"
 
@@ -103,6 +106,7 @@ void MenuService::loginMenu()
 
     cout << RESET << "\n";
 
+<<<<<<< HEAD
     cout << WHITE << "Branch   : " << CYAN << "Kuching HQ\n";
     cout << WHITE << "Version  : " << YELLOW << "2.0.0\n";
     cout << WHITE << "Database : " << GREEN << "Connected ✓\n\n";
@@ -110,10 +114,31 @@ void MenuService::loginMenu()
     cout << "┌─────────────────────────────────────────────┐\n";
     cout << "│                 LOGIN                       │\n";
     cout << "├─────────────────────────────────────────────┤\n\n";
+=======
+    cout << WHITE
+         << "Branch   : "
+         << CYAN
+         << "Kuching HQ\n";
+
+    cout << WHITE
+         << "Version  : "
+         << YELLOW
+         << "2.0.0\n";
+
+    cout << WHITE
+         << "Database : "
+         << GREEN
+         << "Connected ✓\n";
+
+    cout << RESET;
+
+    cout << "\n--------------------------------------------------------------\n";
+>>>>>>> d3b786b596bfbf909e73e8bb539fe9261ead3c98
 
     string username;
     string password;
 
+<<<<<<< HEAD
     cout << " Username : ";
     cin >> username;
 
@@ -135,16 +160,52 @@ void MenuService::loginMenu()
             managerMenu();
         else if(role=="CASHIER")
             cashierMenu();
+=======
+    cout << CYAN << "Username : " << RESET;
+    cin >> username;
+
+    cout << CYAN << "Password : " << RESET;
+    cin >> password;
+
+    if(auth->login(username,password))
+    {
+        cout << GREEN
+             << "\nLogin Successful!\n"
+             << RESET;
+
+        UtilsService::pause();
+
+        string role =
+            auth->getCurrentUser()->getRole();
+
+        if(role=="ADMIN")
+            adminMenu();
+
+        else if(role=="MANAGER")
+            managerMenu();
+
+        else if(role=="CASHIER")
+            cashierMenu();
+
+>>>>>>> d3b786b596bfbf909e73e8bb539fe9261ead3c98
         else
             customerMenu();
     }
     else
     {
+<<<<<<< HEAD
         cout << RED << "\nInvalid Username or Password.\n" << RESET;
+=======
+        cout << RED
+             << "\nInvalid Username or Password.\n"
+             << RESET;
+
+>>>>>>> d3b786b596bfbf909e73e8bb539fe9261ead3c98
         UtilsService::pause();
     }
 }
 
+<<<<<<< HEAD
 std::string getCurrentTime()
 {
     time_t now = time(nullptr);
@@ -320,6 +381,101 @@ void MenuService::productMenu()
     } while(choice != 0);
 }
 
+=======
+
+void MenuService::adminMenu()
+
+{
+
+    int choice;
+
+
+
+    do
+
+    {
+
+        UtilsService::clearScreen();
+
+
+
+        cout
+
+        << "\n====== ADMIN MENU ======\n"
+
+        << "1. Manage Products\n"
+
+        << "2. Manage Users\n"
+
+        << "3. View Reports\n"
+
+        << "4. Logout\n"
+
+        << "\nChoice: ";
+
+
+
+        cin>>choice;
+
+
+
+        switch(choice)
+
+        {
+
+
+        case 1:
+
+            productService->displayProducts();
+
+            break;
+
+
+
+        case 3:
+
+            reportService->generateSalesReport();
+
+            break;
+
+
+
+        case 4:
+
+            auth->logout();
+
+            break;
+
+
+
+        default:
+
+            cout<<"Invalid option";
+
+        }
+
+
+
+        UtilsService::pause();
+
+
+
+    }
+
+    while(choice!=4);
+
+
+}
+
+
+
+
+
+
+
+
+
+>>>>>>> d3b786b596bfbf909e73e8bb539fe9261ead3c98
 void MenuService::managerMenu()
 
 {
@@ -392,6 +548,16 @@ void MenuService::managerMenu()
 }
 
 
+<<<<<<< HEAD
+=======
+
+
+
+
+
+
+
+>>>>>>> d3b786b596bfbf909e73e8bb539fe9261ead3c98
 void MenuService::cashierMenu()
 
 {

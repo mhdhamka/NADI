@@ -46,6 +46,7 @@ int main()
         &databaseService
     );
 
+<<<<<<< HEAD
     ProductService productService(
         &databaseService
     );
@@ -56,6 +57,11 @@ int main()
         &productService
     );
 
+=======
+    ProductService productService;
+    OrderService orderService;
+    InventoryService inventoryService;
+>>>>>>> d3b786b596bfbf909e73e8bb539fe9261ead3c98
     ReportService reportService;
 
     // =========================================

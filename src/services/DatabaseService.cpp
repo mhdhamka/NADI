@@ -254,6 +254,7 @@ bool DatabaseService::deleteUser(const string& username)
     return success;
 }
 
+<<<<<<< HEAD
 // ======================================================
 // Product Operations
 // ======================================================
@@ -499,6 +500,8 @@ vector<Product> DatabaseService::searchProducts(
     return products;
 }
 
+=======
+>>>>>>> d3b786b596bfbf909e73e8bb539fe9261ead3c98
 bool DatabaseService::createTables()
 {
     string sql = R"(
@@ -513,6 +516,7 @@ CREATE TABLE IF NOT EXISTS Users
 
 CREATE TABLE IF NOT EXISTS Products
 (
+<<<<<<< HEAD
     productID TEXT PRIMARY KEY,
     sku TEXT,
     barcode TEXT,
@@ -528,6 +532,13 @@ CREATE TABLE IF NOT EXISTS Products
     reorderLevel INTEGER DEFAULT 10,
 
     status INTEGER DEFAULT 0
+=======
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    brand TEXT,
+    price REAL,
+    stock INTEGER
+>>>>>>> d3b786b596bfbf909e73e8bb539fe9261ead3c98
 );
 
 CREATE TABLE IF NOT EXISTS Customers
